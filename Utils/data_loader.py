@@ -35,7 +35,7 @@ def sort_filanames(dataset):
 def image_loder(folderPath, dataset):
     images = []
 
-    for i, filename in enumerate(os.listdir(folderPath)):
+    for i, filename in enumerate(sorted(os.listdir(folderPath))):
 
         assert filename == dataset.Image[i] + '.jpg'
         img = cv2.imread(os.path.join(folderPath, filename))
