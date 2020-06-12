@@ -28,7 +28,8 @@ ap.add_argument('-t', '--test_dir', required=True,
 # submission dir
 ap.add_argument('-s', '--subDir', required=True,
                 help='Path to submission file')
-
+ap.add_argument('-o', '--output', required=True,
+                help='Path to save the plot')
 args = vars(ap.parse_args())
 
 # load csv files
@@ -53,7 +54,7 @@ X_test = np.array(testProcessed)
 
 # normalize them by dividing 255
 Features = Features / 255.0
-X_test = X_test/ 255.0
+X_test = X_test / 255.0
 
 # let's play with our target column
 # convert them to Label Encoding so that we can later apply Inverse label encoding
@@ -69,7 +70,7 @@ print(X_train.shape, y_train.shape)
 print(X_val.shape, y_val.shape)
 
 model = model()
-opt = SGD(lr=0.01, decay=0.01/40, momentum=0.9, nesterov=True)
+opt = SGD(lr=0.01, decay=0.01 / 40, momentum=0.9, nesterov=True)
 model.compile(loss='categorical_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
@@ -79,13 +80,11 @@ H = model.fit(X_train, y_train,
               validation_data=(X_val, y_val),
               shuffle=True, verbose=1)
 
-print(classification_report(traindfSorted['target'], le.inverse_transform(model.predict_classes(trainProcessed, batch_size=1))))
-
-predictionTarget = le.inverse_transform(model.predict_classes(testProcessed, batch_size=1))
+predictionTarget = le.inverse_transform(model.predict_classes(X_test, batch_size=1))
 submission = pd.DataFrame()
-submission['Image'] = testdfSorted['Images']
+submission['Image'] = testdfSorted['Image']
 submission['target'] = predictionTarget
-submission.to_csv(args['sub'], index=False)
+submission.to_csv(args['subDir'], index=False)
 
 plt.figure()
 plt.plot(np.arange(0, 20), H.history["val_loss"], label="val_loss")
@@ -99,6 +98,9 @@ plt.savefig(args["output"])
 
 predictionTarget = le.inverse_transform(model.predict_classes(testProcessed, batch_size=1))
 submission = pd.DataFrame()
-submission['Image'] = testdfSorted['Images']
+submission['Image'] = testdfSorted['Image']
 submission['target'] = predictionTarget
-submission.to_csv(args['sub'], index=False)
+submission.to_csv(args['subDir'], index=False)
+
+# print(classification_report(le.fit_transform(traindfSorted['target']),
+# model.predict_classes(Features, batch_size=1)))
