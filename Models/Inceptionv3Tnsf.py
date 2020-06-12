@@ -9,7 +9,8 @@ def model():
                                                    input_shape=(440, 440, 3))
     for layers in base_model.layers:
         layers.trainable = False
-    print(base_model.get_layer('conv2d_80').output_shape)
+
+    # print(base_model.get_layer('conv2d_80').output_shape)
 
     x = Conv2D(filters=128, activation='relu', kernel_size=1)(base_model.get_layer('conv2d_80').output)
     x = BatchNormalization()(x)
