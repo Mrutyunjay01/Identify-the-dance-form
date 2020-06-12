@@ -1,15 +1,13 @@
 import os
 import cv2
-import pandas as pd
-from matplotlib import pyplot as plt
 import argparse
 
+'''
 ap = argparse.ArgumentParser()
 ap.add_argument('-d', '--directory', required=True,
                 help='Path to image directory')
 args = vars(ap.parse_args())
 
-'''
 traindf = pd.read_csv('../dataset/train.csv')
 testdf = pd.read_csv('../dataset/test.csv')
 '''
@@ -45,11 +43,3 @@ def image_loder(folderPath, dataset):
         if img is not None:
             images.append(img)
     return images
-
-
-if __name__ == '__main__':
-    traindf = pd.read_csv(r'C:\Users\MRUTYUNJAY BISWAL\Desktop\Hackerearth deep learning challenge\dataset\train.csv')
-
-    trainSort = sort_filanames(traindf)
-    trainImages = image_loder(args['directory'], trainSort)
-    print(trainImages)
