@@ -75,14 +75,15 @@ H = model.fit(X_train, y_train,
               validation_data=(X_val, y_val),
               shuffle=True, verbose=1)
 
-predictionTarget = le.inverse_transform(model.predict_classes(X_test, batch_size=1))
+predictions = model.predict(X_test, batch_size=1).argmax(axis=1)
+predictionTarget = le.inverse_transform(predictions)
 submission = pd.DataFrame()
 submission['Image'] = testdfSorted['Image']
 submission['target'] = predictionTarget
+submission['Image'] = submission['Image'].apply(lambda x: str(x) + '.jpg')
 submission.to_csv(args['subDir'], index=False)
 
 plt.figure()
-plt.plot(np.arange(0, 20), H.history["val_loss"], label="val_loss")
 plt.plot(np.arange(0, 20), H.history["accuracy"], label="training_accuracy")
 plt.plot(np.arange(0, 20), H.history["val_accuracy"], label="val_accuracy")
 plt.title("Training Loss and accuracy")
@@ -90,12 +91,6 @@ plt.xlabel("#Epochs")
 plt.ylabel("loss/Accuracy")
 plt.legend()
 plt.savefig(args["output"])
-
-predictionTarget = le.inverse_transform(model.predict_classes(testProcessed, batch_size=1))
-submission = pd.DataFrame()
-submission['Image'] = testdfSorted['Image']
-submission['target'] = predictionTarget
-submission.to_csv(args['subDir'], index=False)
 
 # print(classification_report(le.fit_transform(traindfSorted['target']),
 # model.predict_classes(Features, batch_size=1)))
