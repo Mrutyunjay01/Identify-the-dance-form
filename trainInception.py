@@ -73,7 +73,9 @@ model = model()
 H = model.fit(X_train, y_train,
               batch_size=1, epochs=20,
               validation_data=(X_val, y_val),
-              shuffle=True, verbose=1)
+              shuffle=True, verbose=0,
+              steps_per_epoch=len(X_train)//8,
+              validation_steps=len(X_val)//4)
 
 predictions = model.predict(X_test, batch_size=1).argmax(axis=1)
 predictionTarget = le.inverse_transform(predictions)
