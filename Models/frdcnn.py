@@ -10,17 +10,20 @@ def _fire_block(input_tensor, s1, e1, e3):
 
     # squeeze layer
     # 1x1 kernel with s1 channels
-    output = Conv2D(filters=s1, kernel_size=(1, 1), padding='same', activation='relu')(input_tensor)
+    output = Conv2D(filters=s1, kernel_size=(1, 1), padding='same', activation='relu',
+                    kernel_initializer=tf.keras.initializers.glorot_uniform())(input_tensor)
 
     # assert output.shape == (H, W, s1), "shape of squeeze layer isn't equal"
 
     # Start Expand layer
     # output will be fed into one 1x1 conv and 3x3 conv
     # 1x1 expansion
-    output1 = Conv2D(filters=e1, kernel_size=(1, 1), padding='same', activation='relu')(output)
+    output1 = Conv2D(filters=e1, kernel_size=(1, 1), padding='same', activation='relu',
+                     kernel_initializer=tf.keras.initializers.glorot_uniform())(output)
 
     # 3x3 expansion
-    output3 = Conv2D(filters=e3, kernel_size=(3, 3), padding='same', activation='relu')(output)
+    output3 = Conv2D(filters=e3, kernel_size=(3, 3), padding='same', activation='relu',
+                     kernel_initializer=tf.keras.initializers.glorot_uniform())(output)
 
     # Concatenate the parallel expansion layers
     output = tf.concat([output1, output3], axis=-1)
@@ -103,9 +106,11 @@ class frdcnn(Model):
     def __init__(self, num_classes):
         super(frdcnn, self).__init__()
 
-        self.conv1 = Conv2D(filters=96, kernel_size=7, strides=2, padding='valid', activation='relu')
+        self.conv1 = Conv2D(filters=96, kernel_size=7, strides=2, padding='valid', activation='relu',
+                            kernel_initializer=tf.keras.initializers.glorot_uniform())
         self.maxpool1 = MaxPooling2D(pool_size=(3, 3), strides=2, padding='valid')
-        self.convfinal = Conv2D(kernel_size=(3, 3), filters=9 * num_classes, padding='same', activation='relu')
+        self.convfinal = Conv2D(kernel_size=(3, 3), filters=9 * num_classes, padding='same', activation='relu',
+                                kernel_initializer=tf.keras.initializers.glorot_uniform())
         self.flatten = Flatten()
         self.dense1 = Dense(units=2048, activation='relu')
         self.dense2 = Dense(units=512, activation='relu')
